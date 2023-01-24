@@ -7,6 +7,10 @@ namespace SeanMorris\Ksqlc;
 class Http
 {
 	const STATUS_OK = 200;
+
+	public static $apiKey;
+	public static $apiSecret;
+
 	/**
 	 * Issue an HTTP GET request.
 	 *
@@ -55,13 +59,15 @@ class Http
 	 */
 	public static function openRequest($method, $url, $content = NULL)
 	{
+		$authHeader = "Authorization: Basic " . base64_encode(self::$apiKey . ":" . self::$apiSecret);
 		$context = stream_context_create(['http' => [
 			'ignore_errors' => true
 			, 'content'     => $content
 			, 'method'      => $method
 			, 'header'      => [
-				'Content-Type: application/vnd.kafka.json.v1+json'
-				, 'Accept: application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json'
+				'Content-Type: application/vnd.kafka.json.v1+json',
+				'Accept: application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json',
+				$authHeader
 			]
 		]]);
 

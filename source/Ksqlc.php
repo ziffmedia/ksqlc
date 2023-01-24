@@ -10,6 +10,7 @@ class Ksqlc
 {
 	const HTTP_OK = 200;
 	protected $endpoint;
+
 	protected static $Http;
 
 	use Injectable;
@@ -19,7 +20,7 @@ class Ksqlc
 	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
-	public function __construct($endpoint)
+	public function __construct($endpoint, $apiKey, $apiSecret)
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
@@ -27,8 +28,13 @@ class Ksqlc
 				'Invalid endpoint.'
 			);
 		}
-
+		$this->apiKey = $apiKey;
+		$this->apiSecret = $apiSecret;
 		$this->endpoint = $endpoint;
+
+		static::inject(['Http' => Http::class]);
+		static::$Http::$apiKey = $apiKey;
+		static::$Http::$apiSecret = $apiSecret;
 	}
 
 	/**
@@ -309,5 +315,3 @@ class Ksqlc
 		yield from $outerIterator;
 	}
 }
-
-Ksqlc::inject(['Http' => Http::class]);
